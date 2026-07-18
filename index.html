@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/retail-dashboard/"
+title = "Retail Sales & Customer Analytics"
+version = "1.0.0"
+id = "artifacts/retail-dashboard"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/retail-dashboard/" ]
+localPort = 25778
+
+[services.development]
+run = "pnpm --filter @workspace/retail-dashboard run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/retail-dashboard", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/retail-dashboard/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25778"
+BASE_PATH = "/retail-dashboard/"

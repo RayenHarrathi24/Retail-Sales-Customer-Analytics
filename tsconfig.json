@@ -1,0 +1,34 @@
+import { useEffect, useState } from 'react';
+
+let cached: boolean | null = null;
+
+function detectWebGL(): boolean {
+  if (cached !== null) return cached;
+  try {
+    const canvas = document.createElement('canvas');
+    const gl =
+      canvas.getContext('webgl2') ||
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl');
+    cached = !!gl;
+  } catch {
+    cached = false;
+  }
+  return cached;
+}
+
+/**
+ * Detects WebGL support up front so we never mount a Three.js <Canvas> in
+ * environments that can't create a GL context (headless browsers, disabled
+ * GPU, locked-down sandboxes) — avoiding the runtime crash entirely instead
+ * of recovering from it after the fact.
+ */
+export function useWebGL(): boolean | null {
+  const [supported, setSupported] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setSupported(detectWebGL());
+  }, []);
+
+  return supported;
+}
